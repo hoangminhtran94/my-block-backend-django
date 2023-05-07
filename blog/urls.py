@@ -5,5 +5,7 @@ from . import views
 urlpatterns = [
     path("", views.get_posts),
     path("<postId>", views.get_post),
+    path("<postId>/comment", views.add_comment),
+
 
 ]

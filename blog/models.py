@@ -31,7 +31,7 @@ class Blog(models.Model):
                              MinLengthValidator(1)])
     content = models.TextField()
     excerpt = models.TextField()
-    image = models.CharField(default="", max_length=255)
+    image = models.ImageField(upload_to="blog-images", null=True)
     owner = models.ForeignKey(
         Author, on_delete=models.SET_NULL, related_name="posts", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -49,10 +49,18 @@ class Blog(models.Model):
             "title": self.title,
             "content": self.content,
             "excerpt": self.excerpt,
-            "image": self.image,
+            "image": self.image.url,
             "owner": owner_dict,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
             "tags": [tag.caption for tag in self.tags.all()]
         }
         return blog_dict
+
+
+class Comment(models.Model):
+    owner = models.ForeignKey(
+        Author, on_delete=models.SET_NULL, related_name="comments", null=True)
+    comment = models.TextField()
+    post = models.ForeignKey(
+        Blog, on_delete=models.CASCADE, related_name="comments")

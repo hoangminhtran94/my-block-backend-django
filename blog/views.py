@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.forms.models import model_to_dict
 
-from .models import Blog
+from .models import Blog, Comment
 
 
 def get_posts(request):
@@ -20,3 +20,10 @@ def get_post(request, postId):
     blog = Blog.objects.get(id=postId)
 
     return JsonResponse(blog.includeOwnerAndTags(), safe=False)
+
+
+def add_comment(request, postId):
+    if request.method == "POST":
+        blog = Blog.objects.get(id=postId)
+        print(request.body)
+        return HttpResponse("success")
