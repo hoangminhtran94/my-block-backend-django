@@ -38,6 +38,24 @@ class Blog(models.Model):
             "owner": owner_dict,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
+            "tags": [tag.caption for tag in self.tags.all()],
+            "comments": [{"comment": comment.comment, "owner": comment.getOwner()} for comment in self.comments.all()]
+        }
+        return blog_dict
+
+    def includeOwnerAndTagsOnCreated(self):
+        owner_dict = self.owner.getUserData()
+
+        blog_dict = {
+            "id": self.id,
+            "slug": self.slug,
+            "title": self.title,
+            "content": self.content,
+            "excerpt": self.excerpt,
+            "image": self.image,
+            "owner": owner_dict,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
             "tags": [tag.caption for tag in self.tags.all()]
         }
         return blog_dict
@@ -49,3 +67,11 @@ class Comment(models.Model):
     comment = models.TextField()
     post = models.ForeignKey(
         Blog, on_delete=models.CASCADE, related_name="comments")
+
+    def getOwner(self):
+        user_dict = {"firstname": self.owner.first_name,
+                     "fullname": f"{ self.owner.first_name} { self.owner.last_name}",
+                     "lastname":  self.owner.last_name,
+                     "profilePicture":  self.owner.profile_picture.url,
+                     "email":  self.owner.email}
+        return user_dict

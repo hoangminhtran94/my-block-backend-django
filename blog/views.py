@@ -24,9 +24,50 @@ def get_posts(request):
 
 
 def get_post(request, postId):
-    blog = Blog.objects.get(id=postId)
+    if (request.method == "GET"):
+        blog = Blog.objects.get(id=postId)
+        print(blog.comments.all())
+        return JsonResponse(blog.includeOwnerAndTags(), safe=False)
+    if (request.method == "POST"):
 
-    return JsonResponse(blog.includeOwnerAndTags(), safe=False)
+        sessionId = request.COOKIES.get("sessionid")
+        if not sessionId:
+            return JsonResponse({'error': 'Session not found'}, status=404)
+
+        session = Session.objects.get(session_key=sessionId)
+
+        if not session:
+            return JsonResponse({'error': 'Session not found'}, status=404)
+
+        user_id = session.get_decoded().get('_auth_user_id')
+        user = WebsiteUser.objects.get(user_ptr_id=user_id)
+        if not user:
+            return JsonResponse({'error': 'Unauthenticated'}, status=404)
+
+        blog = Blog.objects.get(id=postId)
+
+        image = blog.image
+        file = request.FILES.get("image")
+        if (file):
+            response = cloudinary.uploader.upload(
+                file, folder="blog-media/blog-images")
+            image = response["url"]
+
+        data = request.POST
+        blog.title = data.get("title")
+        blog.content = data.get("content")
+        blog.excerpt = data.get("excerpt")
+        tags = data.getlist("tags")
+        tagList = list([])
+        for tag in tags:
+            tagList.append(Tag.objects.get(caption=tag))
+        blog.tags.set(tagList)
+        blog.slug = slugify(data.get("title"))
+        blog.image = image
+        blog.save()
+        if (file):
+            return JsonResponse(blog.includeOwnerAndTagsOnCreated(), status=201)
+        return JsonResponse(blog.includeOwnerAndTags(), status=201)
 
 
 def addABlog(request):
@@ -63,10 +104,31 @@ def addABlog(request):
             title=title, content=content, excerpt=excerpt, slug=slug, owner=user, image=image)
         blog.tags.set(tagList)
         blog.save()
-        return JsonResponse({'success': 'success'}, status=201)
+
+        return JsonResponse(blog.includeOwnerAndTagsOnCreated(), status=201)
     return JsonResponse({'error': 'Not allowed'}, status=403)
-# def add_comment(request, postId):
-#     if request.method == "POST":
-#         blog = Blog.objects.get(id=postId)
-#         print(request.body)
-#         return HttpResponse("success")
+
+
+def add_comment(request, postId):
+    if (request.method == "POST"):
+        sessionId = request.COOKIES.get("sessionid")
+        if not sessionId:
+            return JsonResponse({'error': 'Session not found'}, status=404)
+
+        session = Session.objects.get(session_key=sessionId)
+
+        if not session:
+            return JsonResponse({'error': 'Session not found'}, status=404)
+
+        user_id = session.get_decoded().get('_auth_user_id')
+        user = WebsiteUser.objects.get(user_ptr_id=user_id)
+        if not user:
+            return JsonResponse({'error': 'Unauthenticated'}, status=404)
+
+        data = request.POST
+        commentContent = data.get("comment")
+        blog = Blog.objects.get(id=postId)
+        comment = Comment.objects.create(
+            comment=commentContent, owner=user, post=blog)
+        comment.save()
+        return JsonResponse({"comment": commentContent, "owner": comment.getOwner()}, status=201)
