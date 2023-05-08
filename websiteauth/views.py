@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from .models import WebsiteUser
 from django.contrib.auth import login, authenticate, logout
@@ -33,9 +33,10 @@ def register(request):
 
 
 def loginUser(request):
-    data = json.loads(request.body)
-    username = data.get("username")
+    data = data = request.POST
+    username = data.get("email")
     password = data.get("password")
+
     if username is None:
         return JsonResponse({
             "errors": {
@@ -49,9 +50,11 @@ def loginUser(request):
             }
         }, status=400)
     user = authenticate(username=username, password=password)
+
     if user is not None:
         login(request, user)
-        return JsonResponse({"success": "User has been logged in"})
+        userdata = WebsiteUser.objects.get(username=user)
+        return JsonResponse({"success": "User has been logged in", "data": userdata.getUserData()})
     return JsonResponse(
         {"errors": "Invalid credentials"},
         status=400,
@@ -59,5 +62,9 @@ def loginUser(request):
 
 
 def logoutUser(request):
-    logout(request)
-    return JsonResponse({"success": "User has been logged out"})
+    try:
+        logout(request)
+    except:
+        return JsonResponse(
+            {"errors": "Error"})
+    return JsonResponse({"message": "Success"}, status="201")
