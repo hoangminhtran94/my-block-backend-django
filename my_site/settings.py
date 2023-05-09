@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import cloudinary
+from os import getenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-57b+#)%422y6@r^h=@^%-e%%h!!9x(e#d7&88=2d(@#u3j=-kw'
+SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getenv("IS_PRODUCTION", True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    getenv("APP_HOST")
+]
 
 
 # Application definition
@@ -85,17 +88,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'my_site.wsgi.application'
 # CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-]
+
+CORS_ALLOWED_ORIGINS = [getenv("CORS_ALLOWED_ORIGINS_LOCAL"), getenv(
+    "CORS_ALLOWED_ORIGINS_PUBLIC", "http://localhost:4200")]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        "USER": getenv("DB_USER"),
+        "PASSWORD": getenv("DB_PASSWORD"),
+        "HOST": getenv("DB_ENDPOINT"),
+        "PORT": getenv("DB_PORT")
     }
 }
 
@@ -146,16 +157,17 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 CORS_ALLOW_CREDENTIALS = True
 
 cloudinary.config(
-    cloud_name="dso1cyy53",
-    api_key="574692615186725",
-    api_secret="RSg-3cD1fe-8p2VEdCEROkCKWbk"
+    cloud_name=getenv("CLOUD_NAME"),
+    api_key=getenv("API_KEY"),
+    api_secret=getenv("API_SECRET")
 )
-SESSION_COOKIE_SAMESITE = 'None'
+
+SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SECURE = True
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dso1cyy53',
-    'API_KEY': '574692615186725',
-    'API_SECRET': "RSg-3cD1fe-8p2VEdCEROkCKWbk",
+    'CLOUD_NAME': getenv("CLOUD_NAME"),
+    'API_KEY': getenv("API_KEY"),
+    'API_SECRET': getenv("API_SECRET"),
     'SECURE': True
 }
