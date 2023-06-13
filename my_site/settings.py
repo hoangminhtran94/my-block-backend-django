@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import cloudinary
 from os import getenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv("IS_PRODUCTION", True)
+DEBUG = getenv("IS_DEVELOPMENT", True)
 
 ALLOWED_HOSTS = [
     getenv("APP_HOST")
@@ -96,18 +97,7 @@ CORS_ALLOWED_ORIGINS = [getenv("CORS_ALLOWED_ORIGINS_LOCAL"), getenv(
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        "USER": getenv("DB_USER"),
-        "PASSWORD": getenv("DB_PASSWORD"),
-        "HOST": getenv("DB_ENDPOINT"),
-        "PORT": getenv("DB_PORT")
-    }
+    'default': dj_database_url.config(default=getenv("DATABASE_URL"), engine='django_cockroachdb')
 }
 
 
