@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import cloudinary
-from os import getenv
+from os import environ
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,13 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = getenv("SECRET_KEY")
+SECRET_KEY = environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv("IS_DEVELOPMENT", True)
+DEBUG = environ.get("IS_DEVELOPMENT", True)
 
 ALLOWED_HOSTS = [
-    getenv("APP_HOST")
+    environ.get("APP_HOST")
 ]
 
 
@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
     'cloudinary_storage',
-    'django.contrib.staticfiles',
     'cloudinary'
 ]
 
@@ -90,14 +90,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'my_site.wsgi.application'
 # CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOWED_ORIGINS = [getenv("CORS_ALLOWED_ORIGINS_LOCAL"), getenv(
+CORS_ALLOWED_ORIGINS = [environ.get("CORS_ALLOWED_ORIGINS_LOCAL"), environ.get(
     "CORS_ALLOWED_ORIGINS_PUBLIC", "http://localhost:4200")]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=getenv("DATABASE_URL"), engine='django_cockroachdb')
+    'default': dj_database_url.config(default=environ.get("DATABASE_URL"), engine='django_cockroachdb')
 }
 
 
@@ -147,17 +147,17 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 CORS_ALLOW_CREDENTIALS = True
 
 cloudinary.config(
-    cloud_name=getenv("CLOUD_NAME"),
-    api_key=getenv("API_KEY"),
-    api_secret=getenv("API_SECRET")
+    cloud_name=environ.get("CLOUD_NAME"),
+    api_key=environ.get("API_KEY"),
+    api_secret=environ.get("API_SECRET")
 )
 
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SECURE = True
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': getenv("CLOUD_NAME"),
-    'API_KEY': getenv("API_KEY"),
-    'API_SECRET': getenv("API_SECRET"),
+    'CLOUD_NAME': environ.get("CLOUD_NAME"),
+    'API_KEY': environ.get("API_KEY"),
+    'API_SECRET': environ.get("API_SECRET"),
     'SECURE': True
 }
