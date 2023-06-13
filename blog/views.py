@@ -70,7 +70,7 @@ def get_post(request, postId):
         return JsonResponse(blog.includeOwnerAndTags(), status=201)
 
 
-def addABlog(request):
+def add_a_blog(request):
     if (request.method == "POST"):
         sessionId = request.COOKIES.get("sessionid")
         if not sessionId:
