@@ -16,15 +16,14 @@ from os import environ
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-STATIC_ROOT = 'static/'
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get(
-    "SECRET_KEY", "django-insecure-57b+#)%422y6@r^h=@^%-e%%h!!9x(e#d7&88=2d(@#u3j=-kw")
+SECRET_KEY = environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = environ.get("IS_DEVELOPMENT", True)
@@ -92,7 +91,7 @@ WSGI_APPLICATION = 'my_site.wsgi.application'
 # CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [environ.get("CORS_ALLOWED_ORIGINS_LOCAL"), environ.get(
-    "CORS_ALLOWED_ORIGINS_PUBLIC", "http://localhost:4200")]
+    "CORS_ALLOWED_ORIGINS_PUBLIC"), 'http://localhost:4200']
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
