@@ -26,7 +26,7 @@ def get_posts(request):
 def get_post(request, postId):
     id = int(postId)
     if (request.method == "GET"):
-        blog = Blog.objects.get(id=id)
+        blog = Blog.objects.get(pk=id)
         print(blog.comments.all())
         return JsonResponse(blog.includeOwnerAndTags(), safe=False)
     if (request.method == "POST"):
