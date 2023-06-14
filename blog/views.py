@@ -41,10 +41,7 @@ def get_post(request, postId):
             return JsonResponse({'error': 'Session not found'}, status=404)
 
         user_id = session.get_decoded().get('_auth_user_id')
-        user = WebsiteUser.objects.get(user_ptr_id=user_id)
-        if not user:
-            return JsonResponse({'error': 'Unauthenticated'}, status=404)
-
+        user = get_object_or_404(WebsiteUser, id=user_id)
         blog = Blog.objects.get(id=id)
 
         image = blog.image
