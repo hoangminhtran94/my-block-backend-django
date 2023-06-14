@@ -29,7 +29,7 @@ class Blog(models.Model):
         owner_dict = self.owner.getUserData()
 
         blog_dict = {
-            "id": self.id,
+            "id": str(self.id),
             "slug": self.slug,
             "title": self.title,
             "content": self.content,

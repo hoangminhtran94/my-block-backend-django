@@ -20,14 +20,14 @@ def get_posts(request):
     for blog in blogs:
         theList.append(blog.includeOwnerAndTags())
 
+    print(theList)
     return JsonResponse({"blogs": theList, "tags": list(tags)}, safe=False)
 
 
 def get_post(request, postId):
     id = int(postId)
     if (request.method == "GET"):
-        blog = Blog.objects.get(pk=id)
-        print(blog.comments.all())
+        blog = Blog.objects.get(id=id)
         return JsonResponse(blog.includeOwnerAndTags(), safe=False)
     if (request.method == "POST"):
         sessionId = request.COOKIES.get("sessionid")
