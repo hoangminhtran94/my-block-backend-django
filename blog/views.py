@@ -122,7 +122,7 @@ def add_comment(request, postId):
             return JsonResponse({'error': 'Session not found'}, status=404)
 
         user_id = session.get_decoded().get('_auth_user_id')
-        user = WebsiteUser.objects.get(user_ptr_id=user_id)
+        user = WebsiteUser.objects.get(user_ptr_id=int(user_id))
         if not user:
             return JsonResponse({'error': 'Unauthenticated'}, status=404)
         data = request.POST
