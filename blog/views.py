@@ -25,7 +25,7 @@ def get_posts(request):
 
 def get_post(request, postId):
     if (request.method == "GET"):
-        blog = Blog.objects.get(id=postId)
+        blog = Blog.objects.get(id=int(postId))
         print(blog.comments.all())
         return JsonResponse(blog.includeOwnerAndTags(), safe=False)
     if (request.method == "POST"):
@@ -44,7 +44,7 @@ def get_post(request, postId):
         if not user:
             return JsonResponse({'error': 'Unauthenticated'}, status=404)
 
-        blog = Blog.objects.get(id=postId)
+        blog = Blog.objects.get(id=int(postId))
 
         image = blog.image
         file = request.FILES.get("image")
@@ -127,7 +127,7 @@ def add_comment(request, postId):
 
         data = request.POST
         commentContent = data.get("comment")
-        blog = Blog.objects.get(id=postId)
+        blog = Blog.objects.get(id=int(postId))
         comment = Comment.objects.create(
             comment=commentContent, owner=user, post=blog)
         comment.save()
