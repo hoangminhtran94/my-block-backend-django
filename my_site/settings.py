@@ -153,8 +153,9 @@ cloudinary.config(
     api_secret=environ.get("API_SECRET")
 )
 
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'NONE'
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = False
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': environ.get("CLOUD_NAME"),
