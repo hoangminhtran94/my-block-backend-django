@@ -89,7 +89,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'my_site.wsgi.application'
-# CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_WHITELIST = [
+    'https://my-blog-frontend-angular.vercel.app',
+]
 
 CORS_ALLOWED_ORIGINS = [environ.get("CORS_ALLOWED_ORIGINS_LOCAL"), environ.get(
     "CORS_ALLOWED_ORIGINS_PUBLIC"), 'http://localhost:4200']
