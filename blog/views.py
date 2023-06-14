@@ -24,12 +24,12 @@ def get_posts(request):
 
 
 def get_post(request, postId):
+    id = int(postId)
     if (request.method == "GET"):
-        blog = Blog.objects.get(id=int(postId))
+        blog = Blog.objects.get(id=id)
         print(blog.comments.all())
         return JsonResponse(blog.includeOwnerAndTags(), safe=False)
     if (request.method == "POST"):
-
         sessionId = request.COOKIES.get("sessionid")
         if not sessionId:
             return JsonResponse({'error': 'Session not found'}, status=404)
@@ -44,7 +44,7 @@ def get_post(request, postId):
         if not user:
             return JsonResponse({'error': 'Unauthenticated'}, status=404)
 
-        blog = Blog.objects.get(id=int(postId))
+        blog = Blog.objects.get(id=id)
 
         image = blog.image
         file = request.FILES.get("image")
@@ -110,6 +110,7 @@ def add_a_blog(request):
 
 
 def add_comment(request, postId):
+    id = int(postId)
     if (request.method == "POST"):
         sessionId = request.COOKIES.get("sessionid")
         if not sessionId:
@@ -124,10 +125,9 @@ def add_comment(request, postId):
         user = WebsiteUser.objects.get(user_ptr_id=user_id)
         if not user:
             return JsonResponse({'error': 'Unauthenticated'}, status=404)
-
         data = request.POST
         commentContent = data.get("comment")
-        blog = Blog.objects.get(id=int(postId))
+        blog = Blog.objects.get(id=id)
         comment = Comment.objects.create(
             comment=commentContent, owner=user, post=blog)
         comment.save()
