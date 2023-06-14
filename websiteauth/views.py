@@ -54,8 +54,9 @@ def loginUser(request):
     if user is not None:
         login(request, user)
         userdata = WebsiteUser.objects.get(username=user)
+        session_key = request.session.session_key
         response = JsonResponse(
-            {"success": "User has been logged in", "data": userdata.getUserData()})
+            {"success": "User has been logged in", "data": userdata.getUserData(), "sessionid": session_key})
         response['Access-Control-Allow-Credentials'] = 'true'
         return response
     return JsonResponse(
