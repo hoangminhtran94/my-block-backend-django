@@ -27,7 +27,7 @@ STATIC_ROOT = "static/"
 SECRET_KEY = environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = environ.get("IS_DEVELOPMENT", True)
+DEBUG = False
 
 ALLOWED_HOSTS = [
     environ.get("APP_HOST")
